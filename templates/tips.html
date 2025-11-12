@@ -3,15 +3,150 @@
 <head>
     <title>Tips para Separar Residuos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 40px;
+            align-items: start;
+            margin: 20px 0;
+        }
+
+        .text-content {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tips-image {
+            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #2196F3;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .menu-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-button:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 900px) {
+            .content-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tips-image {
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Tips para Separar Residuos</h2>
-    <ul>
-        <li>Usa botes de colores: verde (orgánicos), gris (inorgánicos), azul (reciclables).</li>
-        <li>Lava los envases antes de reciclarlos.</li>
-        <li>Evita el uso de plásticos de un solo uso.</li>
-        <li>Composta los residuos orgánicos.</li>
-    </ul>
-    <a href="{{ url_for('menu') }}">Volver al menú</a>
+    <div class="container">
+        <h2>Tips para Separar Residuos</h2>
+        
+        <div class="content-wrapper">
+            <img src="{{ url_for('static', filename='images/tips.jpg') }}" alt="Tips para separar residuos" class="tips-image" onclick="openModal(this.src)">
+            
+            <div class="text-content">
+                <ul>
+                    <li>Usa botes de colores: verde (orgánicos), gris (inorgánicos), azul (reciclables).</li>
+                    <li>Lava los envases antes de reciclarlos.</li>
+                    <li>Evita el uso de plásticos de un solo uso.</li>
+                    <li>Composta los residuos orgánicos.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="infografia-section">
+            <h2 class="infografia-title">Infografía Detallada</h2>
+            <div class="infografia-container">
+                <img src="{{ url_for('static', filename='images/infografia.png') }}" 
+                     alt="Infografía sobre separación de residuos" 
+                     class="infografia-image"
+                     onclick="openModal(this.src)">
+            </div>
+        </div>
+
+        <a href="{{ url_for('menu') }}" class="menu-button">Volver al menú</a>
+    </div>
+
+    <!-- Modal para ver imágenes -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        // Funciones para el modal
+        function openModal(imgSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = "block";
+            modalImg.src = imgSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = "none";
+        }
+
+        // Cerrar modal al hacer clic fuera de la imagen
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Cerrar modal con la tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                document.getElementById('imageModal').style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>

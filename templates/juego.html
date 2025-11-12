@@ -1,30 +1,494 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Juego Didáctico</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script>
-        function verificarRespuesta() {
-            const respuesta = document.querySelector('input[name="pregunta"]:checked');
-            if (!respuesta) {
-                alert("Selecciona una opción");
-                return;
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Aventura 3R - Aprende Reciclaje</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
             }
-            if (respuesta.value === "correcta") {
-                alert("¡Correcto! Separar residuos ayuda al planeta.");
-            } else {
-                alert("Incorrecto. Intenta nuevamente.");
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
             }
         }
+        
+        .pulse-green {
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+        
+        .carousel-container {
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .carousel-slide {
+            min-width: 100%;
+            transition: transform 0.5s ease;
+        }
+        
+        .game-item {
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+        
+        .game-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .game-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        
+        .drop-zone {
+            border: 3px dashed #ccc;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #22c55e;
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+        
+        .correct-drop {
+            animation: correct-flash 0.6s ease;
+        }
+        
+        @keyframes correct-flash {
+            0% { background-color: rgba(34, 197, 94, 0.3); }
+            50% { background-color: rgba(34, 197, 94, 0.6); }
+            100% { background-color: rgba(34, 197, 94, 0.1); }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <main class="min-h-full gradient-bg"><!-- Header -->
+   <header class="text-center py-8 px-4">
+    <h1 id="main-title" class="text-6xl font-bold text-white mb-4 bounce">🌍 Eco Aventura 3R 🌱</h1>
+    <p id="subtitle" class="text-2xl text-green-100 font-semibold">Aprende las 3R del Reciclaje de forma Divertida</p>
+   </header><!-- Las 3R Section -->
+   <section class="max-w-6xl mx-auto px-4 py-8">
+    <h2 class="text-4xl font-bold text-center text-white mb-8">🔄 Las 3R del Reciclaje 🔄</h2>
+    <div class="grid md:grid-cols-3 gap-8"><!-- Reducir -->
+     <div class="bg-red-500 rounded-2xl p-6 card-hover text-white text-center">
+      <div class="text-6xl mb-4">
+       🔻
+      </div>
+      <h3 class="text-3xl font-bold mb-4">REDUCIR</h3>
+      <p class="text-lg leading-relaxed">Consume menos productos y elige opciones más sostenibles. ¡Cada pequeña acción cuenta para nuestro planeta! 🌍</p>
+      <div class="mt-4 text-4xl">
+       ♻
+      </div>
+     </div><!-- Reutilizar -->
+     <div class="bg-yellow-500 rounded-2xl p-6 card-hover text-white text-center">
+      <div class="text-6xl mb-4">
+       🔄
+      </div>
+      <h3 class="text-3xl font-bold mb-4">REUTILIZAR</h3>
+      <p class="text-lg leading-relaxed">Dale una segunda vida a los objetos. Una botella puede ser una maceta, ¡usa tu creatividad! ✨</p>
+      <div class="mt-4 text-4xl">
+       🎨
+      </div>
+     </div><!-- Reciclar -->
+     <div class="bg-green-500 rounded-2xl p-6 card-hover text-white text-center">
+      <div class="text-6xl mb-4">
+       ♻
+      </div>
+      <h3 class="text-3xl font-bold mb-4">RECICLAR</h3>
+      <p class="text-lg leading-relaxed">Separa correctamente los materiales para que puedan convertirse en nuevos productos. 🌟</p>
+      <div class="mt-4 text-4xl">
+       🗂
+      </div>
+     </div>
+    </div>
+   </section><!-- Carrusel de Información -->
+   <section class="max-w-4xl mx-auto px-4 py-8">
+    <h2 class="text-4xl font-bold text-center text-white mb-8">📚 Aprende Más 📚</h2>
+    <div class="carousel-container bg-white rounded-2xl overflow-hidden shadow-2xl">
+     <div id="carousel" class="flex transition-transform duration-500"><!-- Slide 1 -->
+      <div class="carousel-slide p-8 bg-gradient-to-br from-blue-400 to-purple-500 text-white">
+       <div class="text-center">
+        <div class="text-8xl mb-4">
+         🌊
+        </div>
+        <h3 class="text-3xl font-bold mb-4">Océanos Limpios</h3>
+        <p class="text-xl leading-relaxed">Cada año, 8 millones de toneladas de plástico llegan a nuestros océanos. ¡Tú puedes ayudar a cambiar esto! 🐠🐢</p>
+       </div>
+      </div><!-- Slide 2 -->
+      <div class="carousel-slide p-8 bg-gradient-to-br from-green-400 to-blue-500 text-white">
+       <div class="text-center">
+        <div class="text-8xl mb-4">
+         🌳
+        </div>
+        <h3 class="text-3xl font-bold mb-4">Salva los Bosques</h3>
+        <p class="text-xl leading-relaxed">Reciclar una tonelada de papel salva 17 árboles. ¡Imagínate cuántos árboles puedes salvar! 🌲🍃</p>
+       </div>
+      </div><!-- Slide 3 -->
+      <div class="carousel-slide p-8 bg-gradient-to-br from-yellow-400 to-red-500 text-white">
+       <div class="text-center">
+        <div class="text-8xl mb-4">
+         ⚡
+        </div>
+        <h3 class="text-3xl font-bold mb-4">Ahorra Energía</h3>
+        <p class="text-xl leading-relaxed">Reciclar aluminio usa 95% menos energía que producir uno nuevo. ¡El reciclaje es súper eficiente! 💡⚡</p>
+       </div>
+      </div>
+     </div>
+     <div class="flex justify-center py-4 bg-white"><button onclick="previousSlide()" class="mx-2 px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors"> ⬅ Anterior </button> <button onclick="nextSlide()" class="mx-2 px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors"> Siguiente ➡ </button>
+     </div>
+    </div>
+   </section><!-- Juego Interactivo -->
+   <section class="max-w-6xl mx-auto px-4 py-8">
+    <h2 id="game-title" class="text-4xl font-bold text-center text-white mb-8">🎮 ¡Clasifica la Basura! 🎮</h2>
+    <div class="bg-white rounded-2xl p-8 shadow-2xl">
+     <div class="text-center mb-6">
+      <p class="text-xl text-gray-700 mb-4">Arrastra cada objeto al contenedor correcto. ¡Aprende jugando! 🎯</p>
+      <div class="text-2xl font-bold text-green-600">
+       Puntuación: <span id="score">0</span> / 9 ✨
+      </div>
+     </div><!-- Objetos para clasificar -->
+     <div class="mb-8">
+      <h3 class="text-2xl font-bold text-center mb-4 text-gray-700">Objetos para clasificar:</h3>
+      <div id="items-container" class="flex flex-wrap justify-center gap-4"><!-- Los objetos se generarán con JavaScript -->
+      </div>
+     </div><!-- Contenedores -->
+     <div class="grid md:grid-cols-3 gap-6">
+      <div class="drop-zone bg-red-100 border-red-300 rounded-2xl p-6 text-center min-h-32" data-type="organico">
+       <div class="text-4xl mb-2">
+        🗑
+       </div>
+       <h4 class="text-xl font-bold text-red-600">Orgánico</h4>
+       <p class="text-sm text-red-500">Restos de comida</p>
+      </div>
+      <div class="drop-zone bg-blue-100 border-blue-300 rounded-2xl p-6 text-center min-h-32" data-type="reciclable">
+       <div class="text-4xl mb-2">
+        ♻
+       </div>
+       <h4 class="text-xl font-bold text-blue-600">Reciclable</h4>
+       <p class="text-sm text-blue-500">Plástico, papel, vidrio</p>
+      </div>
+      <div class="drop-zone bg-gray-100 border-gray-300 rounded-2xl p-6 text-center min-h-32" data-type="general">
+       <div class="text-4xl mb-2">
+        🗂
+       </div>
+       <h4 class="text-xl font-bold text-gray-600">General</h4>
+       <p class="text-sm text-gray-500">Otros residuos</p>
+      </div>
+     </div>
+     <div class="text-center mt-6"><button onclick="resetGame()" class="px-8 py-3 bg-green-500 text-white rounded-full text-xl font-bold hover:bg-green-600 transition-colors pulse-green"> 🔄 Reiniciar Juego </button>
+     </div>
+    </div>
+     </section>
+    <div style="text-align: center; margin: 1.5rem 0;">
+        <a href="{{ url_for('menu') }}" class="menu-button">Volver al menú</a>
+    </div>
+   <!-- Reflexión -->
+   <section class="max-w-4xl mx-auto px-4 py-8">
+    <h2 id="reflection-title" class="text-4xl font-bold text-center text-white mb-8">💭 ¿Por qué es importante? 💭</h2>
+    <div class="bg-white rounded-2xl p-8 shadow-2xl">
+     <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+       <h3 class="text-2xl font-bold text-gray-800 mb-4">🌍 Nuestro Planeta nos Necesita</h3>
+       <p class="text-lg text-gray-700 leading-relaxed mb-4">Cada vez que tiramos basura en su lugar correcto, estamos:</p>
+       <ul class="text-lg text-gray-700 space-y-2">
+        <li>🌊 Protegiendo nuestros océanos</li>
+        <li>🌳 Salvando bosques y animales</li>
+        <li>💨 Reduciendo la contaminación del aire</li>
+        <li>🌱 Creando un futuro más verde</li>
+       </ul>
+      </div>
+      <div class="text-center">
+       <div class="text-9xl mb-4">
+        🌍
+       </div>
+       <p class="text-xl font-bold text-green-600">¡Juntos podemos hacer la diferencia! 💚</p>
+      </div>
+     </div>
+     <div class="mt-8 p-6 bg-gradient-to-r from-green-100 to-blue-100 rounded-xl">
+      <h4 class="text-xl font-bold text-center text-gray-800 mb-4">🎯 Tu Misión Diaria</h4>
+      <div class="grid md:grid-cols-3 gap-4 text-center">
+       <div class="p-4">
+        <div class="text-3xl mb-2">
+         🔻
+        </div>
+        <p class="font-semibold">Reduce tu consumo</p>
+       </div>
+       <div class="p-4">
+        <div class="text-3xl mb-2">
+         🔄
+        </div>
+        <p class="font-semibold">Reutiliza objetos</p>
+       </div>
+       <div class="p-4">
+        <div class="text-3xl mb-2">
+         ♻
+        </div>
+        <p class="font-semibold">Recicla correctamente</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Footer -->
+   <footer class="text-center py-8 px-4">
+    <p class="text-xl text-white font-semibold">🌟 ¡Cada acción cuenta para un planeta más limpio! 🌟</p>
+    <p class="text-lg text-green-100 mt-2">Comparte este conocimiento con tus amigos y familia 💚</p>
+   </footer>
+  </main>
+    <!-- Botón fijo destacado para volver al menú -->
+    <div aria-hidden="false">
+        <a href="{{ url_for('menu') }}" class="menu-button menu-button--fixed">Volver al menú</a>
+    </div>
+  <script>
+        // Configuración del SDK
+        const defaultConfig = {
+            main_title: "🌍 Eco Aventura 3R 🌱",
+            subtitle: "Aprende las 3R del Reciclaje de forma Divertida",
+            game_title: "🎮 ¡Clasifica la Basura! 🎮",
+            reflection_title: "💭 ¿Por qué es importante? 💭"
+        };
+
+        // Inicializar SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig: defaultConfig,
+                onConfigChange: async (config) => {
+                    document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+                    document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+                    document.getElementById('game-title').textContent = config.game_title || defaultConfig.game_title;
+                    document.getElementById('reflection-title').textContent = config.reflection_title || defaultConfig.reflection_title;
+                },
+                mapToCapabilities: (config) => ({
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["main_title", config.main_title || defaultConfig.main_title],
+                    ["subtitle", config.subtitle || defaultConfig.subtitle],
+                    ["game_title", config.game_title || defaultConfig.game_title],
+                    ["reflection_title", config.reflection_title || defaultConfig.reflection_title]
+                ])
+            });
+        }
+
+        // Carrusel
+        let currentSlide = 0;
+        const totalSlides = 3;
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const carousel = document.getElementById('carousel');
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        // Auto-play del carrusel
+        setInterval(nextSlide, 5000);
+
+        // Juego de clasificación
+        const gameItems = [
+            { emoji: '🍌', name: 'Cáscara de plátano', type: 'organico' },
+            { emoji: '🥤', name: 'Botella de plástico', type: 'reciclable' },
+            { emoji: '📰', name: 'Periódico', type: 'reciclable' },
+            { emoji: '🍎', name: 'Corazón de manzana', type: 'organico' },
+            { emoji: '🥫', name: 'Lata de aluminio', type: 'reciclable' },
+            { emoji: '🧦', name: 'Calcetín roto', type: 'general' },
+            { emoji: '🥕', name: 'Zanahoria podrida', type: 'organico' },
+            { emoji: '📦', name: 'Caja de cartón', type: 'reciclable' },
+            { emoji: '🧸', name: 'Juguete roto', type: 'general' }
+        ];
+
+        let score = 0;
+        let gameItemsShuffled = [];
+
+        function initGame() {
+            gameItemsShuffled = [...gameItems].sort(() => Math.random() - 0.5);
+            renderGameItems();
+            score = 0;
+            updateScore();
+        }
+
+        function renderGameItems() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = '';
+            
+            gameItemsShuffled.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'game-item bg-white border-2 border-gray-300 rounded-xl p-4 text-center cursor-grab shadow-lg';
+                itemDiv.draggable = true;
+                itemDiv.dataset.type = item.type;
+                itemDiv.dataset.index = index;
+                
+                itemDiv.innerHTML = `
+                    <div class="text-4xl mb-2">${item.emoji}</div>
+                    <p class="text-sm font-semibold text-gray-700">${item.name}</p>
+                `;
+                
+                itemDiv.addEventListener('dragstart', handleDragStart);
+                itemDiv.addEventListener('dragend', handleDragEnd);
+                
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.type);
+            e.dataTransfer.setData('index', e.target.dataset.index);
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        // Configurar drop zones
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('drop', handleDrop);
+            zone.addEventListener('dragenter', handleDragEnter);
+            zone.addEventListener('dragleave', handleDragLeave);
+        });
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.target.closest('.drop-zone').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            if (!e.target.closest('.drop-zone').contains(e.relatedTarget)) {
+                e.target.closest('.drop-zone').classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropZone = e.target.closest('.drop-zone');
+            dropZone.classList.remove('drag-over');
+            
+            const itemType = e.dataTransfer.getData('text/plain');
+            const itemIndex = e.dataTransfer.getData('index');
+            const zoneType = dropZone.dataset.type;
+            
+            if (itemType === zoneType) {
+                // Respuesta correcta
+                score++;
+                updateScore();
+                
+                // Animación de éxito
+                dropZone.classList.add('correct-drop');
+                setTimeout(() => dropZone.classList.remove('correct-drop'), 600);
+                
+                // Remover el item
+                const itemElement = document.querySelector(`[data-index="${itemIndex}"]`);
+                if (itemElement) {
+                    itemElement.style.animation = 'bounce 0.5s ease';
+                    setTimeout(() => itemElement.remove(), 500);
+                }
+                
+                // Verificar si el juego terminó
+                if (score === gameItems.length) {
+                    setTimeout(() => {
+                        showCongratulations();
+                    }, 1000);
+                }
+            } else {
+                // Respuesta incorrecta - el item vuelve a su lugar
+                const itemElement = document.querySelector(`[data-index="${itemIndex}"]`);
+                if (itemElement) {
+                    itemElement.style.animation = 'shake 0.5s ease';
+                    setTimeout(() => itemElement.style.animation = '', 500);
+                }
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+
+        function showCongratulations() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = `
+                <div class="text-center p-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl text-white">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h3 class="text-3xl font-bold mb-4">¡Felicidades!</h3>
+                    <p class="text-xl mb-4">¡Has clasificado correctamente toda la basura!</p>
+                    <p class="text-lg">Eres un verdadero héroe del medio ambiente 🌍💚</p>
+                </div>
+            `;
+        }
+
+        function resetGame() {
+            initGame();
+        }
+
+        // Inicializar el juego al cargar la página
+        document.addEventListener('DOMContentLoaded', initGame);
+
+        // Agregar animación de shake para respuestas incorrectas
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
-</head>
-<body>
-    <h2>Juego Didáctico</h2>
-    <p>¿Dónde debes colocar una botella de plástico?</p>
-    <input type="radio" name="pregunta" value="incorrecta"> Orgánicos<br>
-    <input type="radio" name="pregunta" value="correcta"> Reciclables<br>
-    <input type="radio" name="pregunta" value="incorrecta"> Inorgánicos no reciclables<br>
-    <button onclick="verificarRespuesta()">Responder</button>
-    <a href="{{ url_for('menu') }}">Volver al menú</a>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'997744c6c07c07a3',t:'MTc2MTk1Njg3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

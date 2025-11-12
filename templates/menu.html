@@ -1,16 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Menú Principal</title>
+    <title>Menú - Proyecto PEC</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: #bbebb7; /* Amarillo limón suave */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-section {
+            flex: 0 0 40%;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.9) 0%, rgba(27, 94, 32, 0.95) 100%); /* Verde más oscuro para el menú con transparencia */
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .image-section {
+            flex: 0 0 60%;
+            background: #c5f3c1; /* Amarillo limón suave */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .background-image {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            transition: transform 0.5s ease;
+        }
+
+        .background-image:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            color: white;
+            text-align: left;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+            .menu-button {
+            display: block;
+            padding: 20px 30px;
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-button:hover {
+            background: linear-gradient(120deg, rgba(255, 223, 91, 0.3) 0%, rgba(255, 193, 7, 0.4) 100%);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .menu-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .menu-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .menu-button.introduccion:hover { background: rgba(111, 227, 115, 0.8); }
+        .menu-button.tips:hover { background: rgba(33, 150, 243, 0.8); }
+        .menu-button.juego:hover { background: rgba(255, 152, 0, 0.8); }
+        .menu-button.denuncias:hover { background: rgba(244, 67, 54, 0.8); }
+
+        @media (max-width: 1024px) {
+            .page-container {
+                flex: 0 0 60%;
+                background: rgba(116, 159, 128, 0.95); /* Dorado tenue para pantallas pequeñas */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px;
+                position: relative;
+                backdrop-filter: blur(5px);
+                box-shadow: inset 0 0 100px rgba(255, 255, 255, 0.5); /* Efecto de luz suave */
+            }
+            .image-section {
+                padding: 20px;
+            }
+            .background-image {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Menú Principal</h1>
-    <ul>
-        <li><a href="{{ url_for('introduccion') }}">Introducción</a></li>
-        <li><a href="{{ url_for('tips') }}">Tips para Separar Residuos</a></li>
-        <li><a href="{{ url_for('juego') }}">Juego Didáctico</a></li>
-        <li><a href="{{ url_for('denuncias') }}">Denuncias</a></li>
-    </ul>
+    <div class="page-container">
+        <div class="menu-section">
+            <h1>Menú Principal</h1>
+            <ul class="menu">
+                <li><a href="{{ url_for('introduccion') }}" class="menu-button introduccion">Introducción</a></li>
+                <li><a href="{{ url_for('tips') }}" class="menu-button tips">Tips para Separar Residuos</a></li>
+                <li><a href="{{ url_for('juego') }}" class="menu-button juego">Juego Didáctico</a></li>
+                <li><a href="{{ url_for('denuncias') }}" class="menu-button denuncias">Denuncias</a></li>
+            </ul>
+        </div>
+        <div class="image-section">
+            <img src="{{ url_for('static', filename='images/tiradero.png') }}"
+                 alt="Imagen de tiradero"
+                 class="background-image">
+        </div>
+    </div>
 </body>
 </html>

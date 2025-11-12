@@ -3,10 +3,144 @@
 <head>
     <title>Introducción</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: #4CAF50;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .intro-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding-bottom: 56.25%; /* Aspecto 16:9 */
+            height: 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .menu-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-button:hover {
+            background: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .intro-text {
+                font-size: 1.1em;
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>¿Por qué afectan los residuos al medio ambiente?</h2>
-    <p>Los residuos mal gestionados contaminan el suelo, el agua y el aire. Además, afectan la salud de las personas y los ecosistemas. Separar y reciclar ayuda a reducir el impacto ambiental.</p>
-    <a href="{{ url_for('menu') }}">Volver al menú</a>
+    <div class="container">
+        <div class="header">
+            <h2>¿Por qué afectan los residuos al medio ambiente?</h2>
+        </div>
+
+        <div class="intro-text">
+            <p>Los residuos mal gestionados contaminan el suelo, el agua y el aire. Además, afectan la salud de las personas y los ecosistemas. Reducir, reutilizar y reciclar son acciones clave para cuidar nuestro entorno.</p>
+            <p>La separación correcta de residuos es fundamental para minimizar el impacto ambiental y promover un futuro sostenible. A continuación, te presentamos un video informativo sobre este importante tema.</p>
+        </div>
+
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/sdkqUWDCHh0" 
+                title="Video sobre el impacto ambiental de los residuos"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ url_for('menu') }}" class="menu-button">Volver al menú</a>
+        </div>
+    </div>
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        // Funciones para el modal
+        function openModal(imgSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = "block";
+            modalImg.src = imgSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = "none";
+        }
+
+        // Cerrar modal al hacer clic fuera de la imagen
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Cerrar modal con la tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                document.getElementById('imageModal').style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,24 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyecto PEC</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
-<body onload="animacionInicio()">
-    <div id="inicio">
-        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee" alt="Paisaje" class="imagen-fondo">
-        <div class="overlay">
-            <h1>Bienvenidos al Proyecto PEC</h1>
-            <button id="entrar-btn">Entrar</button>
-            <script>
-                document.getElementById('entrar-btn').onclick = function() {
-                    window.location.href = '{{ url_for("menu") }}';
-                };
-            </script>
-        </div>
+<body class="inicio">
+    <div class="overlay">
+        <h1>Bienvenidos al Proyecto PEC</h1>
+        <a href="{{ url_for('menu') }}" class="button">Entrar</a>
     </div>
 </body>
 </html>
