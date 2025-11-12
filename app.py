@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, Denuncia
 import os
+import logging
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Obtener la ruta base de la aplicación
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -14,13 +19,25 @@ app = Flask(__name__,
 database_url = os.environ.get('DATABASE_URL', '')
 if not database_url or database_url.startswith('postgres'):
     database_url = 'sqlite:///denuncias.db'
+
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': 5,
+    'pool_recycle': 3600,
+    'pool_pre_ping': True,
+    'connect_args': {'timeout': 10},
+}
 
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
+# Crear tablas si no existen
+try:
+    with app.app_context():
+        db.create_all()
+        logger.info("Base de datos inicializada correctamente")
+except Exception as e:
+    logger.error(f"Error al inicializar la base de datos: {e}")
 
 @app.route('/')
 def index():
@@ -73,4 +90,6 @@ def eliminar(id):
     return redirect(url_for('denuncias'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # En desarrollo, usar debug=True. En producción (Render), gunicorn maneja esto
+    debug_mode = os.getenv('FLASK_ENV') == 'development'
+    app.run(debug=debug_mode, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
