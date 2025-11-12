@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Denuncias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Denuncias de Basureros Clandestinos - Chimalhuacán</h2>
+    <form method="POST">
+        Nombre (opcional): <input type="text" name="nombre"><br>
+        Lugar de la denuncia: <input type="text" name="lugar" required><br>
+        <button type="submit">Guardar Denuncia</button>
+    </form>
+
+    <h3>Denuncias Registradas</h3>
+    <table border="1">
+        <tr>
+            <th>Número</th>
+            <th>Nombre</th>
+            <th>Lugar</th>
+            <th>Acciones</th>
+        </tr>
+        {% for d in denuncias %}
+        <tr>
+            <td>{{ d.numero }}</td>
+            <td>{{ d.nombre }}</td>
+            <td>{{ d.lugar }}</td>
+            <td>
+                <a href="{{ url_for('editar', id=d.id) }}">Editar</a> |
+                <a href="{{ url_for('eliminar', id=d.id) }}" onclick="return confirm('¿Seguro que deseas eliminar esta denuncia?')">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('menu') }}">Volver al menú</a>
+</body>
+</html>

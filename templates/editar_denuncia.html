@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Denuncia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Editar Denuncia</h2>
+    <form method="POST">
+        Nombre (opcional): <input type="text" name="nombre" value="{{ denuncia.nombre }}"><br>
+        Lugar de la denuncia: <input type="text" name="lugar" value="{{ denuncia.lugar }}" required><br>
+        <button type="submit">Actualizar</button>
+    </form>
+    <a href="{{ url_for('denuncias') }}">Volver</a>
+</body>
+</html>
+

@@ -2,7 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for
 from models import db, Denuncia
 import os
 
-app = Flask(__name__)
+# Obtener la ruta base de la aplicación
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Crear la aplicación Flask con rutas explícitas
+app = Flask(__name__,
+            template_folder=os.path.join(basedir, 'templates'),
+            static_folder=os.path.join(basedir, 'static'))
+
 # Usar SQLite como base de datos predeterminada
 database_url = os.environ.get('DATABASE_URL', '')
 if not database_url or database_url.startswith('postgres'):

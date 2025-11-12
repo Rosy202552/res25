@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menú Principal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Menú Principal</h1>
+    <ul>
+        <li><a href="{{ url_for('introduccion') }}">Introducción</a></li>
+        <li><a href="{{ url_for('tips') }}">Tips para Separar Residuos</a></li>
+        <li><a href="{{ url_for('juego') }}">Juego Didáctico</a></li>
+        <li><a href="{{ url_for('denuncias') }}">Denuncias</a></li>
+    </ul>
+</body>
+</html>

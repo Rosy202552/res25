@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Juego Didáctico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function verificarRespuesta() {
+            const respuesta = document.querySelector('input[name="pregunta"]:checked');
+            if (!respuesta) {
+                alert("Selecciona una opción");
+                return;
+            }
+            if (respuesta.value === "correcta") {
+                alert("¡Correcto! Separar residuos ayuda al planeta.");
+            } else {
+                alert("Incorrecto. Intenta nuevamente.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Juego Didáctico</h2>
+    <p>¿Dónde debes colocar una botella de plástico?</p>
+    <input type="radio" name="pregunta" value="incorrecta"> Orgánicos<br>
+    <input type="radio" name="pregunta" value="correcta"> Reciclables<br>
+    <input type="radio" name="pregunta" value="incorrecta"> Inorgánicos no reciclables<br>
+    <button onclick="verificarRespuesta()">Responder</button>
+    <a href="{{ url_for('menu') }}">Volver al menú</a>
+</body>
+</html>
