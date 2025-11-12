@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from models import db, Denuncia
 import os
 import logging
+import urllib.parse as up
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -15,29 +16,90 @@ app = Flask(__name__,
             template_folder=os.path.join(basedir, 'templates'),
             static_folder=os.path.join(basedir, 'static'))
 
-# Usar SQLite como base de datos predeterminada
-database_url = os.environ.get('DATABASE_URL', '')
-if not database_url or database_url.startswith('postgres'):
-    database_url = 'sqlite:///denuncias.db'
+# Determinar URL de la base de datos: usar DATABASE_URL si está definida (Postgres en Render)
+raw_database_url = os.environ.get('DATABASE_URL')
 
+
+def _resolve_database_url(raw_url):
+    """Resolver la URL final a usar para SQLAlchemy.
+    Intentamos validar la conexión a Postgres (si aplica) y percent-encode la contraseña
+    cuando sea necesario. Si no está disponible o falla, devolvemos una URL SQLite local.
+    """
+    # Fallback SQLite local
+    database_path = os.path.join(basedir, 'instance', 'denuncias.db')
+    sqlite_url = f"sqlite:///{database_path}"
+
+    if not raw_url:
+        return sqlite_url
+
+    # Normalizar prefijo
+    url = raw_url
+    if url.startswith('postgres://'):
+        url = url.replace('postgres://', 'postgresql://', 1)
+
+    # Sólo intentamos validar Postgres URI
+    if url.startswith('postgresql://'):
+        # Intentar conectar usando psycopg2 directamente (antes de registrar SQLAlchemy)
+        try:
+            import psycopg2
+        except Exception as e:
+            logger.warning('psycopg2 no disponible localmente, usaremos SQLite fallback: %s', e)
+            return sqlite_url
+
+        # Intentar conexión directa; si falla por unicode, intentar percent-encode la contraseña
+        try:
+            # psycopg2 acepta el URI directamente
+            conn = psycopg2.connect(url)
+            conn.close()
+            return url
+        except Exception as first_err:
+            logger.warning('Conexión directa a Postgres falló: %s', first_err)
+            # Intentar percent-encode de la contraseña y reconectar
+            try:
+                parts = up.urlsplit(url)
+                username = parts.username or ''
+                password = parts.password or ''
+                if password:
+                    password_enc = up.quote_plus(password)
+                    netloc = f"{username}:{password_enc}@{parts.hostname}"
+                    if parts.port:
+                        netloc += f":{parts.port}"
+                    candidate = up.urlunsplit((parts.scheme, netloc, parts.path, parts.query, parts.fragment))
+                    conn = psycopg2.connect(candidate)
+                    conn.close()
+                    return candidate
+            except Exception as second_err:
+                logger.warning('Reintento con password encoded falló: %s', second_err)
+
+    # Si todo lo anterior falla, usar SQLite local
+    return sqlite_url
+
+
+# Resolver y aplicar la URL final
+database_url = _resolve_database_url(raw_database_url)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_size': 5,
-    'pool_recycle': 3600,
-    'pool_pre_ping': True,
-    'connect_args': {'timeout': 10},
-}
 
-db.init_app(app)
+# Engine options: ajustar según motor
+if database_url.startswith('sqlite'):
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'connect_args': {'check_same_thread': False}
+    }
+else:
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_size': 5,
+        'pool_recycle': 3600,
+        'pool_pre_ping': True,
+    }
 
-# Crear tablas si no existen
+# Inicializar SQLAlchemy una sola vez con la URL final
 try:
+    db.init_app(app)
     with app.app_context():
         db.create_all()
-        logger.info("Base de datos inicializada correctamente")
+    logger.info('Base de datos inicializada correctamente usando %s', database_url.split('://', 1)[0])
 except Exception as e:
-    logger.error(f"Error al inicializar la base de datos: {e}")
+    logger.exception('Error inicializando la base de datos final: %s', e)
 
 @app.route('/')
 def index():
