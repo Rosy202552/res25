@@ -1,0 +1,17 @@
+Puerto: 5432
+Password: v7PZykoE84Qj7cVZwk3TaKYbnbHoz9St
+
+internal database: postgresql://denuncias_user:v7PZykoE84Qj7cVZwk3TaKYbnbHoz9St@dpg-d48gbu63jp1c73cis8kg-a/denuncias
+external database: postgresql://denuncias_user:v7PZykoE84Qj7cVZwk3TaKYbnbHoz9St@dpg-d48gbu63jp1c73cis8kg-a.oregon-postgres.render.com/denuncias
+
+userdatabase: denuncias_user
+database: denuncias
+
+hostname: dpg-d48gbu63jp1c73cis8kg-a
+
+postgresql://denuncias_user: v7PZykoE84Qj7cVZwk3TaKYbnbHoz9St@localhost:5432/denuncias
+
+
+git remote add origin https://github.com/Rosy202552/res25.git
+git branch -M main
+git push -u origin main
